@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration>
+
+    <!-- 配置全局通用属性 -->
+    <properties>
+        <property name="logDir">D://test</property>
+    </properties>
+
+    <!-- 配置appender -->
+    <Appenders>
+        <!-- 配置控制台输出 -->
+        <Console name="consoleAppender" target="SYSTEM_ERR">
+
+        </Console>
+
+        <!-- 配置文件输出 -->
+        <File name="fileAppender" fileName="${logDir}//log4j2.log">
+            <!-- 配置文件输出格式 -->
+            <PatternLayout pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} %m%n"/>
+        </File>
+
+        <!-- 按照指定规则来拆分日志文件
+
+             FileName:日志文件的名字
+             FilePattern：日志文件拆分后文件的命名规则
+                          $${date:yyyy-MM-dd}：根据日期当天，创建一个文件夹
+                          roll-%d{yyyy-MM-dd-HH-mm}-%i.log
+                              为文件命名的规则：%i表示序号
+
+
+
+
+        -->
+        <RollingFile name="rollingFile" fileName="${logDir}//roll.log"
+                                filePattern="${logDir}/$${date:yyyy-MM-dd}/roll-%d{yyyy-MM-dd-HH-mm}-%i.log">
+
+            <!-- 日志消息格式 -->
+            <PatternLayout pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} %m%n"/>
+
+            <Policies>
+
+                <!-- 在系统启动时，触发拆分规则，产生一个日志文件 -->
+                <OnStartupTriggeringPolicy/>
+
+                <!-- 按照文件的大小进行拆分 -->
+                <SizeBasedTriggeringPolicy size="10KB"/>
+
+                <!-- 按照时间节点进行拆分，拆分规则就是filePattern -->
+                <TimeBasedTriggeringPolicy/>
+
+
+            </Policies>
+            <!-- 在同一目录下，文件的个数限制，如果超过了设置的数值，则根据时间进行覆盖，新的覆盖旧的规则 -->
+            <DefaultRolloverStrategy max="30"/>
+
+        </RollingFile>
+
+        <!-- 配置异步日志 -->
+        <Async name="myAsync">
+            <!-- 将控制台输出做异步的操作 -->
+            <AppenderRef ref="consoleAppender"/>
+        </Async>
+
+    </Appenders>
+
+    <!-- 配置logger -->
+    <Loggers>
+
+        <!-- 配置root logger -->
+        <Root level="trace">
+
+            <!-- 引用Appender -->
+            <AppenderRef ref="consoleAppender"/>
+<!--            <AppenderRef ref="fileAppender"/>-->
+<!--            <AppenderRef ref="rollingFile"/>-->
+<!--            <AppenderRef ref="myAsync"/>-->
+
+        </Root>
+
+    </Loggers>
+
+
+</Configuration>
